@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+</head>
+<body>
+   
+    {% include "navbar.html"%}
+    <a href="{% url 'home'%}"><button>Continue Shopping</button></a> 
+    <a href="{% url 'shipping'%}"><button>Checkout</button></a> 
+    <h1>Total Iteam:{{value}}</h1>
+    <h1>Grand Total: {{grand_total}}</h1>
+    <table>
+        <tr>
+          <th>Product List</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+          
+        </tr>
+    {% for pro in order %}
+   
+        <tr>
+         <td><img src="{{pro.Product.Images.url}}" alt="" srcset=""></td>
+         <td ><img class="up" data-id ={{pro.id}} data-action ="add" onclick="checkoutfun(this.dataset.id,this.dataset.action)" src="{% static 'Image/download.jpg'%}" alt="" srcset=""><br><h1>{{pro.Quantity}}</h1><img class="up"  data-id ={{pro.id}} data-action ="remove"  onclick="checkoutfun(this.dataset.id,this.dataset.action)" src="{% static 'Image/down.png'%}" alt="" srcset=""></td>
+         <td><h1>{{pro.Product.Price}}</h1></td>
+         
+         <td>{{pro.total_price}}</td>
+        
+         
+        </tr>
+        {% endfor %}
+       
+        <script>
+            function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+          
+            function checkoutfun(id,action){
+                var url ='/checkout/'
+                fetch(url,{
+                    method:'POST',
+                    headers:{
+                    'Content-Type':'application/json',
+                    'X-CSRFToken':csrftoken,
+                },
+                body:JSON.stringify({'id':id,'action':action})
+                })
+                .then((response)=>{
+                    return response.json()
+
+                })
+                .then((data)=>{
+                    console.log('data:',data)
+                    location.reload()
+                })
+               
+
+            }
+        </script>
+       
+        
+
+
+
+  
+</body>
+</html>
